@@ -1,7 +1,7 @@
 # [Blocky] - [HTB]
 **Difficulty:** [Easy]  
 **OS:** [Linux]  
-**Date:** [DD/MM/YYYY]  
+**Date:** [05/09/2025]  
 **Machine Type:** [OSWE]
 
 ---
@@ -209,8 +209,7 @@ Target: http://blocky.htb/
 Task Completed
 ```
 2.2 Web Enumeration - The web site was created as wordpress website.
-Directories : wp-admin , wp-content, wp-includes, wiki
-Login pages : wp-login.php
+
 
 
 
